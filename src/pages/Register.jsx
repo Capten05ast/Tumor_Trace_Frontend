@@ -3,10 +3,9 @@
 
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { nanoid } from "nanoid";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { asyncCurrentUser, asyncRegister, asyncRegisterBackend } from "../store/actions/userActions";
+import { asyncCurrentUser, asyncRegisterBackend } from "../store/actions/userActions";
 import { motion } from "framer-motion";
 
 const Register = () => {
@@ -16,46 +15,72 @@ const Register = () => {
   const [focusedInput, setFocusedInput] = useState(null);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  // ✅ Register with email/password
   const submitHandler = (user) => {
-    user.nanoid = nanoid();
-    user.images = [];
-    dispatch(asyncRegister(user));
-    dispatch(asyncCurrentUser(user));
     dispatch(asyncRegisterBackend(user));
     navigate("/login");
   };
 
+  // ✅ Google OAuth Register Handler - FIXED
   const handleGoogleRegister = async () => {
     try {
       setGoogleLoading(true);
       const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://tumor-trace-backend.onrender.com";
-      window.location.href = `${backendUrl}/auth/google?mode=register`;
+      const authUrl = `${backendUrl}/api/auth/google`;  // ✅ FIXED: Use /api/auth/google
+      console.log('🔗 Redirecting to Google OAuth:', authUrl);
+      window.location.href = authUrl;
     } catch (error) {
       console.error("Google registration failed:", error);
       setGoogleLoading(false);
     }
   };
 
+  // ✅ Handle OAuth callback from backend - IMPROVED WITH LOGGING
   React.useEffect(() => {
+    console.log('🔍 ===== OAUTH CALLBACK CHECK (REGISTER) =====');
+    console.log('📍 Current URL:', window.location.href);
+    
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     const userData = params.get("user");
 
-    if (token) {
-      localStorage.setItem("authToken", token);
-      if (userData) {
-        try {
-          const user = JSON.parse(decodeURIComponent(userData));
-          localStorage.setItem("user", JSON.stringify(user));
-          const newUser = { ...user, nanoid: nanoid(), images: [] };
-          dispatch(asyncRegister(newUser));
-          dispatch(asyncCurrentUser(newUser));
-        } catch (e) {
-          console.error("Error parsing user data:", e);
-        }
+    console.log('📝 Token from URL:', token ? `✅ YES (${token.substring(0, 20)}...)` : '❌ NO');
+    console.log('📝 User from URL:', userData ? '✅ YES' : '❌ NO');
+
+    if (token && userData) {
+      console.log('🟢 Both token and userData found! Processing...');
+      try {
+        // ✅ Save token to localStorage
+        localStorage.setItem("authToken", token);
+        console.log('✅ Token saved to localStorage');
+
+        // ✅ Parse and save user data
+        const user = JSON.parse(decodeURIComponent(userData));
+        localStorage.setItem("user", JSON.stringify(user));
+        console.log('✅ User data saved to localStorage:', user);
+
+        // ✅ Dispatch to Redux
+        console.log('🔄 Dispatching asyncCurrentUser to Redux...');
+        dispatch(asyncCurrentUser());
+
+        // ✅ Clear URL and redirect to home
+        console.log('🧹 Clearing URL and redirecting to home...');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // ✅ Small delay to ensure Redux updates
+        setTimeout(() => {
+          navigate("/");
+          console.log('✅ Navigated to home!');
+        }, 500);
+        
+      } catch (error) {
+        console.error('❌ Error processing OAuth callback:', error);
+        console.error('Error details:', error.message);
       }
-      navigate("/");
+    } else {
+      console.log('🟡 No OAuth callback detected (normal on regular registration page)');
     }
+    console.log('============================\n');
   }, [navigate, dispatch]);
 
   return (
@@ -434,6 +459,7 @@ const Register = () => {
 
                 {/* Social Buttons */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
+                  {/* ✅ Google Register Button - FIXED */}
                   <motion.button
                     type="button"
                     onClick={handleGoogleRegister}
@@ -497,3 +523,7 @@ const Register = () => {
 };
 
 export default Register;
+
+
+
+

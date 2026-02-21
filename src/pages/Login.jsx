@@ -35,7 +35,7 @@ const Login = () => {
         }
     };
 
-    // ✅ Handle OAuth callback from backend - IMPROVED WITH LOGGING
+    // ✅ Handle OAuth callback from backend - FIXED VERSION
     React.useEffect(() => {
         console.log('🔍 ===== OAUTH CALLBACK CHECK =====');
         console.log('📍 Current URL:', window.location.href);
@@ -51,7 +51,7 @@ const Login = () => {
         if (token && userData) {
             console.log('🟢 Both token and userData found! Processing...');
             try {
-                // ✅ Save token to localStorage
+                // ✅ Save token to localStorage FIRST
                 localStorage.setItem('authToken', token);
                 console.log('✅ Token saved to localStorage');
 
@@ -64,19 +64,18 @@ const Login = () => {
                 console.log('🔄 Dispatching asyncCurrentUser to Redux...');
                 dispatch(asyncCurrentUser());
 
-                // ✅ Clear URL and redirect to home
+                // ✅ Clear URL params and navigate
                 console.log('🧹 Clearing URL and redirecting to home...');
-                window.history.replaceState({}, document.title, window.location.pathname);
+                window.history.replaceState({}, document.title, '/');
                 
-                // ✅ Small delay to ensure Redux updates
-                setTimeout(() => {
-                    navigate("/");
-                    console.log('✅ Navigated to home!');
-                }, 500);
+                // ✅ Navigate with replace to prevent back button issues
+                navigate("/", { replace: true });
+                console.log('✅ Navigated to home with replace!');
                 
             } catch (error) {
                 console.error('❌ Error processing OAuth callback:', error);
                 console.error('Error details:', error.message);
+                navigate("/login");
             }
         } else {
             console.log('🟡 No OAuth callback detected (normal on regular login page)');
@@ -472,8 +471,5 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
 
 

@@ -105,7 +105,7 @@ const UserProfile = () => {
                       </div>
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border-4 border-slate-900 shadow-xl group-hover:scale-125 transition-transform duration-300">
-                      <span className="text-white text-xl sm:text-xl font-bold">✓</span>
+                      <span className="text-white text-xl sm:text-xl font-bold pl-2">✓</span>
                     </div>
                   </div>
                 </div>

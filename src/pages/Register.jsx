@@ -1,7 +1,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -14,19 +14,24 @@ const Register = () => {
   const navigate = useNavigate();
   const [focusedInput, setFocusedInput] = useState(null);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // ✅ Register with email/password
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const submitHandler = (user) => {
     dispatch(asyncRegisterBackend(user));
     navigate("/login");
   };
 
-  // ✅ Google OAuth Register Handler - FIXED
   const handleGoogleRegister = async () => {
     try {
       setGoogleLoading(true);
       const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://tumor-trace-backend.onrender.com";
-      const authUrl = `${backendUrl}/api/auth/google`;  // ✅ FIXED: Use /api/auth/google
+      const authUrl = `${backendUrl}/api/auth/google`;
       console.log('🔗 Redirecting to Google OAuth:', authUrl);
       window.location.href = authUrl;
     } catch (error) {
@@ -35,7 +40,6 @@ const Register = () => {
     }
   };
 
-  // ✅ Handle OAuth callback from backend - IMPROVED WITH LOGGING
   React.useEffect(() => {
     console.log('🔍 ===== OAUTH CALLBACK CHECK (REGISTER) =====');
     console.log('📍 Current URL:', window.location.href);
@@ -50,32 +54,26 @@ const Register = () => {
     if (token && userData) {
       console.log('🟢 Both token and userData found! Processing...');
       try {
-        // ✅ Save token to localStorage
         localStorage.setItem("authToken", token);
         console.log('✅ Token saved to localStorage');
 
-        // ✅ Parse and save user data
         const user = JSON.parse(decodeURIComponent(userData));
         localStorage.setItem("user", JSON.stringify(user));
         console.log('✅ User data saved to localStorage:', user);
 
-        // ✅ Dispatch to Redux
         console.log('🔄 Dispatching asyncCurrentUser to Redux...');
         dispatch(asyncCurrentUser());
 
-        // ✅ Clear URL and redirect to home
         console.log('🧹 Clearing URL and redirecting to home...');
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.history.replaceState({}, document.title, '/');
         
-        // ✅ Small delay to ensure Redux updates
-        setTimeout(() => {
-          navigate("/");
-          console.log('✅ Navigated to home!');
-        }, 500);
+        navigate("/", { replace: true });
+        console.log('✅ Navigated to home!');
         
       } catch (error) {
         console.error('❌ Error processing OAuth callback:', error);
         console.error('Error details:', error.message);
+        navigate("/register");
       }
     } else {
       console.log('🟡 No OAuth callback detected (normal on regular registration page)');
@@ -86,28 +84,38 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 px-3 sm:px-4 py-8 sm:py-12 relative overflow-hidden">
 
-      {/* Animated Background Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -left-40 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-gradient-to-br from-teal-500/50 via-cyan-400/40 to-teal-500/50 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.7, 0.5] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -right-40 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-gradient-to-tl from-cyan-500/50 via-blue-500/40 to-transparent rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.7, 0.5, 0.7] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[400px] sm:h-[400px] bg-gradient-to-br from-blue-500/40 via-teal-500/30 to-transparent rounded-full blur-3xl"
-          animate={{ rotate: [0, 360], scale: [1, 1.3, 1] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
+      {/* Animated Background Orbs - DISABLED ON MOBILE */}
+      {!isMobile && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute -top-40 -left-40 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-gradient-to-br from-teal-500/50 via-cyan-400/40 to-teal-500/50 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.7, 0.5] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute -bottom-40 -right-40 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-gradient-to-tl from-cyan-500/50 via-blue-500/40 to-transparent rounded-full blur-3xl"
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.7, 0.5, 0.7] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[400px] sm:h-[400px] bg-gradient-to-br from-blue-500/40 via-teal-500/30 to-transparent rounded-full blur-3xl"
+            animate={{ rotate: [0, 360], scale: [1, 1.3, 1] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+      )}
 
-      {/* Particles */}
+      {/* Static Background for Mobile */}
+      {isMobile && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -left-40 w-[300px] h-[300px] bg-gradient-to-br from-teal-500/30 via-cyan-400/20 to-teal-500/30 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -right-40 w-[300px] h-[300px] bg-gradient-to-tl from-cyan-500/30 via-blue-500/20 to-transparent rounded-full blur-3xl" />
+        </div>
+      )}
+
+      {/* Particles - REDUCED ON MOBILE */}
       <div className="fixed inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(isMobile ? 5 : 20)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-teal-400/60 rounded-full"
@@ -118,18 +126,20 @@ const Register = () => {
         ))}
       </div>
 
-      {/* Grid Pattern */}
-      <div className="fixed inset-0 opacity-[0.05] pointer-events-none">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "radial-gradient(circle at 2px 2px, rgb(148, 163, 184) 1px, transparent 0)",
-            backgroundSize: "50px 50px",
-          }}
-          animate={{ backgroundPosition: ["0px 0px", "50px 50px"] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
+      {/* Grid Pattern - DISABLED ON MOBILE */}
+      {!isMobile && (
+        <div className="fixed inset-0 opacity-[0.05] pointer-events-none">
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "radial-gradient(circle at 2px 2px, rgb(148, 163, 184) 1px, transparent 0)",
+              backgroundSize: "50px 50px",
+            }}
+            animate={{ backgroundPosition: ["0px 0px", "50px 50px"] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+      )}
 
       {/* Register Card */}
       <motion.div
@@ -140,7 +150,7 @@ const Register = () => {
       >
         <motion.div
           className="absolute -inset-4 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-300 rounded-[3rem] opacity-40 blur-3xl"
-          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.02, 1] }}
+          animate={!isMobile ? { opacity: [0.4, 0.6, 0.4], scale: [1, 1.02, 1] } : {}}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
 
@@ -150,13 +160,13 @@ const Register = () => {
         >
           <motion.div
             className="absolute inset-0 opacity-80"
-            animate={{
+            animate={!isMobile ? {
               background: [
                 "radial-gradient(circle at 20% 30%, rgba(20, 184, 166, 0.3) 0%, transparent 50%)",
                 "radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.3) 0%, transparent 50%)",
                 "radial-gradient(circle at 20% 30%, rgba(20, 184, 166, 0.3) 0%, transparent 50%)",
               ],
-            }}
+            } : {}}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
 
@@ -172,7 +182,6 @@ const Register = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                {/* Logo */}
                 <div className="mb-8">
                   <motion.div
                     className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-teal-500/30 via-cyan-500/30 to-blue-500/30 rounded-2xl border-2 border-teal-400/50 backdrop-blur-sm relative group"
@@ -182,19 +191,18 @@ const Register = () => {
                   >
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-br from-teal-500/50 to-cyan-500/50 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity"
-                      animate={{ scale: [1, 1.2, 1] }}
+                      animate={!isMobile ? { scale: [1, 1.2, 1] } : {}}
                       transition={{ duration: 2, repeat: Infinity }}
                     />
                     <span className="text-4xl relative z-10">🔬</span>
                   </motion.div>
                 </div>
 
-                {/* Heading */}
                 <h1 className="text-5xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-5 sm:mb-6">
                   <span className="relative inline-block">
                     <motion.span
                       className="absolute -inset-2 bg-gradient-to-r from-teal-400/50 via-cyan-400/50 to-blue-400/50 blur-2xl"
-                      animate={{ opacity: [0.5, 0.8, 0.5] }}
+                      animate={!isMobile ? { opacity: [0.5, 0.8, 0.5] } : {}}
                       transition={{ duration: 3, repeat: Infinity }}
                     />
                     <span className="relative bg-gradient-to-r from-teal-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
@@ -207,7 +215,6 @@ const Register = () => {
                   Create your account and start analyzing bone tumors with cutting-edge AI technology
                 </p>
 
-                {/* Feature List */}
                 <div className="space-y-4 font-mono text-lg sm:text-lg">
                   {[
                     { icon: "✨", text: "Advanced AI Diagnostics" },
@@ -230,7 +237,6 @@ const Register = () => {
                   ))}
                 </div>
 
-                {/* Status Badge */}
                 <motion.div className="mt-10 sm:mt-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
                   <div className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-teal-500/20 via-cyan-500/20 to-blue-500/20 rounded-full border border-teal-400/50">
                     <span className="relative flex h-2 w-2">
@@ -251,13 +257,11 @@ const Register = () => {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="max-w-md mx-auto w-full"
               >
-                {/* Form Header */}
                 <div className="mb-10">
                   <h2 className="text-3xl font-bold text-white mb-3">Create Account</h2>
                   <p className="text-slate-300 text-lg sm:text-base">Join us and get started today</p>
                 </div>
 
-                {/* Input Fields */}
                 <div className="space-y-5 mb-5">
 
                   {/* Username */}
@@ -403,7 +407,6 @@ const Register = () => {
                   </div>
                 </div>
 
-                {/* Terms Checkbox */}
                 <div className="mb-8 px-1">
                   <label className="flex items-center gap-2 cursor-pointer group/check">
                     <div className="relative w-5 h-5">
@@ -420,7 +423,6 @@ const Register = () => {
                   </label>
                 </div>
 
-                {/* Register Button */}
                 <motion.button
                   type="submit"
                   className="relative group w-full py-4 sm:py-3 rounded-2xl overflow-hidden mb-6 flex items-center justify-center"
@@ -447,7 +449,6 @@ const Register = () => {
                   </span>
                 </motion.button>
 
-                {/* Divider */}
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-slate-700" />
@@ -457,9 +458,7 @@ const Register = () => {
                   </div>
                 </div>
 
-                {/* Social Buttons */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  {/* ✅ Google Register Button - FIXED */}
                   <motion.button
                     type="button"
                     onClick={handleGoogleRegister}
@@ -490,7 +489,6 @@ const Register = () => {
                   </motion.button>
                 </div>
 
-                {/* Sign In Link */}
                 <div className="text-center p-4 bg-slate-800/60 border border-slate-700 rounded-xl">
                   <p className="text-slate-300 text-lg sm:text-sm">
                     Already have an account?{" "}
@@ -503,7 +501,6 @@ const Register = () => {
                   </p>
                 </div>
 
-                {/* Security Badge */}
                 <div className="mt-6 flex items-center justify-center gap-2 text-sm sm:text-xs text-slate-400">
                   <motion.span
                     className="w-2 h-2 bg-green-400 rounded-full"
@@ -523,7 +520,5 @@ const Register = () => {
 };
 
 export default Register;
-
-
 
 

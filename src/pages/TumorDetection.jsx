@@ -467,9 +467,9 @@ const TumorDetection = () => {
                   >
                     <span className="mx-auto relative flex items-center justify-center gap-3">
                       {isUploading ? (
-                        <><span className="animate-spin text-2xl sm:text-2xl">⚙️</span><span>Uploading...</span></>
+                        <><span className="animate-spin text-2xl sm:text-2xl mx-auto">⚙️</span><span className="mx-auto">Uploading...</span></>
                       ) : isAnalyzing ? (
-                        <><span className="animate-spin text-2xl sm:text-2xl">⚙️</span><span>Analyzing...</span></>
+                        <><span className="animate-spin text-2xl sm:text-2xl mx-auto">⚙️</span><span className="mx-auto">Analyzing...</span></>
                       ) : (
                         <div className="mx-auto flex items-center gap-2">
                           <span>🚀 Begin Analysis</span>

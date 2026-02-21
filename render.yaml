@@ -10,7 +10,8 @@ services:
     routes:
       - path: /assets/*
         type: static
-      - path: /*
+      - path: /?*
         destination: /index.html
+
 
         

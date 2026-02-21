@@ -1,5 +1,6 @@
 
 
+
 services:
   - type: static
     name: tumor-trace-frontend
@@ -7,10 +8,9 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     routes:
-      - type: rewrite
-        source: /*
+      - path: /assets/*
+        type: static
+      - path: /*
         destination: /index.html
 
-
-
-
+        

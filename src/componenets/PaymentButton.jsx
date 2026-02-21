@@ -16,7 +16,7 @@ const PaymentButton = ({
   const [razorpayReady, setRazorpayReady] = useState(false);
 
   const RAZORPAY_KEY_ID = "rzp_test_SD6yyrDvL2sZlr";
-  const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = "https://tumor-trace-backend.onrender.com";
 
   // ✅ Check if Razorpay is loaded on component mount
   useEffect(() => {

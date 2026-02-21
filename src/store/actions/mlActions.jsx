@@ -12,7 +12,7 @@ export const asyncSendMLResult = ({
 }) => async (dispatch, getState) => {
   try {
     // AXIOS, FRONTEND TO BACKEND CALL :-
-    // Here we are using base URL from axiosconfig.js as baseURL: "http://localhost:5000"
+    // Here we are using base URL from axiosconfig.js as baseURL: "https://tumor-trace-backend.onrender.com"
     // and further appending the /api/ml/result endpoint. to update the ML result for a user uploaded image
     await axios.post("/api/ml/result", {
       fileId,

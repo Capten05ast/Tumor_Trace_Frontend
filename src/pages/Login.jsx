@@ -25,7 +25,7 @@ const Login = () => {
     const handleGoogleLogin = async () => {
         try {
             setGoogleLoading(true);
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://tumor-trace-backend.onrender.com';
             window.location.href = `${backendUrl}/auth/google`;
         } catch (error) {
             console.error('Google login failed:', error);

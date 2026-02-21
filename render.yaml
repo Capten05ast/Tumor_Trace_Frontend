@@ -1,0 +1,15 @@
+
+
+services:
+  - type: static
+    name: tumor-trace-frontend
+    buildCommand: npm run build
+    staticPublishPath: dist
+    routes:
+      - path: /*
+        destination: /index.html
+
+
+
+
+        

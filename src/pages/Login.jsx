@@ -26,41 +26,62 @@ const Login = () => {
         try {
             setGoogleLoading(true);
             const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://tumor-trace-backend.onrender.com';
-            window.location.href = `${backendUrl}/api/auth/google`;
+            const authUrl = `${backendUrl}/api/auth/google`;
+            console.log('🔗 Redirecting to Google OAuth:', authUrl);
+            window.location.href = authUrl;
         } catch (error) {
             console.error('Google login failed:', error);
             setGoogleLoading(false);
         }
     };
 
-    // ✅ Handle OAuth callback from backend
+    // ✅ Handle OAuth callback from backend - IMPROVED WITH LOGGING
     React.useEffect(() => {
+        console.log('🔍 ===== OAUTH CALLBACK CHECK =====');
+        console.log('📍 Current URL:', window.location.href);
+        
         // Check if there's a token in the URL (callback from Google)
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
         const userData = params.get('user');
 
+        console.log('📝 Token from URL:', token ? `✅ YES (${token.substring(0, 20)}...)` : '❌ NO');
+        console.log('📝 User from URL:', userData ? '✅ YES' : '❌ NO');
+
         if (token && userData) {
+            console.log('🟢 Both token and userData found! Processing...');
             try {
                 // ✅ Save token to localStorage
                 localStorage.setItem('authToken', token);
-                console.log('✅ Token saved:', token.substring(0, 20) + '...');
+                console.log('✅ Token saved to localStorage');
 
                 // ✅ Parse and save user data
                 const user = JSON.parse(decodeURIComponent(userData));
                 localStorage.setItem('user', JSON.stringify(user));
-                console.log('✅ User data saved:', user);
+                console.log('✅ User data saved to localStorage:', user);
 
                 // ✅ Dispatch to Redux
+                console.log('🔄 Dispatching asyncCurrentUser to Redux...');
                 dispatch(asyncCurrentUser());
 
                 // ✅ Clear URL and redirect to home
+                console.log('🧹 Clearing URL and redirecting to home...');
                 window.history.replaceState({}, document.title, window.location.pathname);
-                navigate("/");
+                
+                // ✅ Small delay to ensure Redux updates
+                setTimeout(() => {
+                    navigate("/");
+                    console.log('✅ Navigated to home!');
+                }, 500);
+                
             } catch (error) {
-                console.error('❌ Error processing Google auth:', error);
+                console.error('❌ Error processing OAuth callback:', error);
+                console.error('Error details:', error.message);
             }
+        } else {
+            console.log('🟡 No OAuth callback detected (normal on regular login page)');
         }
+        console.log('============================\n');
     }, [navigate, dispatch]);
 
     return (
@@ -451,4 +472,8 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+
 

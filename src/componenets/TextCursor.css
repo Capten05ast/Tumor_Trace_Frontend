@@ -1,0 +1,8 @@
+
+
+.text-cursor-item {
+  position: absolute;
+  font-size: 24px; /* Adjust for size */
+  user-select: none;
+  pointer-events: none;
+}

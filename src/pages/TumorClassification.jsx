@@ -368,7 +368,7 @@ const TumorClassification = () => {
                     <div className="bg-gradient-to-br from-orange-600/30 to-red-600/30 backdrop-blur-sm border-2 border-orange-500/50 rounded-2xl p-6 sm:p-6">
                       <div className="flex items-center gap-3 mb-6 sm:mb-6">
                         <div className="w-12 h-12 sm:w-12 sm:h-12 bg-orange-900/50 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <span className="text-2xl sm:text-2xl">💳</span>
+                          <span className="text-2xl sm:text-2xl pl-2">💳</span>
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-lg sm:text-lg">Payment Required</h3>
@@ -439,7 +439,7 @@ const TumorClassification = () => {
                     <div className="bg-gradient-to-br from-orange-600 to-red-500/20 backdrop-blur-sm border-2 border-orange-500/50 rounded-2xl p-6 sm:p-6">
                       <div className="flex items-center gap-3 mb-5">
                         <div className="w-12 h-12 sm:w-12 sm:h-12 bg-orange-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <span className="text-2xl sm:text-2xl">🧬</span>
+                          <span className="text-2xl sm:text-2xl pl-1">🧬</span>
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-lg sm:text-lg">🔬 Classification Results</h3>
@@ -525,7 +525,7 @@ const TumorClassification = () => {
                   <div key={idx} className="p-6 sm:p-6 bg-gradient-to-br from-slate-700/30 to-slate-800/30 border border-slate-600 rounded-2xl">
                     <div className="flex items-start gap-4 sm:gap-4">
                       <div className={`flex-shrink-0 w-12 h-12 sm:w-12 sm:h-12 bg-gradient-to-br ${item.iconBg} rounded-xl flex items-center justify-center border ${item.iconBorder}`}>
-                        <span className="text-2xl sm:text-2xl">{item.icon}</span>
+                        <span className="text-2xl sm:text-2xl pl-1">{item.icon}</span>
                       </div>
                       <div>
                         <h4 className="text-white font-bold text-lg sm:text-base mb-2 sm:mb-2">{item.title}</h4>

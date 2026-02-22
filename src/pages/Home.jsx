@@ -288,14 +288,14 @@ const Home = () => {
               bend={isMobile ? 2 : 4}
               textColor="#ffffff"
               borderRadius={0.05}
-              scrollEase={isMobile ? 0.05 : 0.1}
+              scrollEase={isMobile ? 0.1 : 0.1}
             />
           </div>
 
           {/* Label below gallery on mobile */}
           {isMobile && (
             <motion.p
-              className="text-center text-xs text-slate-400 mt-2 pb-2 tracking-widest uppercase font-mono"
+              className="text-center text-xs text-slate-400 mt-2 pb-2 tracking-widest uppercase font-mono font-semibold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
@@ -374,7 +374,7 @@ const Home = () => {
                   whileHover={{ y: -20, scale: 1.03, boxShadow: "0 25px 50px -12px rgba(20,184,166,0.25)" }}
                 >
                   <motion.div
-                    className="w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-teal-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mb-6 sm:mb-8 text-3xl sm:text-5xl border border-teal-500/40 shadow-lg"
+                    className="pl-1 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-teal-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mb-6 sm:mb-8 text-3xl sm:text-5xl border border-teal-500/40 shadow-lg"
                     whileHover={{ rotate: 360, scale: 1.1 }}
                     transition={{ duration: 0.8 }}
                   >
@@ -448,7 +448,7 @@ const Home = () => {
                 >
                   <div className="flex items-start gap-4 sm:gap-6">
                     <motion.div
-                      className="flex-shrink-0 w-12 h-12 sm:w-20 sm:h-20 bg-gradient-to-br from-teal-500/30 to-cyan-500/30 rounded-2xl flex items-center justify-center text-2xl sm:text-4xl border border-teal-500/40"
+                      className="pl-1 flex-shrink-0 w-12 h-12 sm:w-20 sm:h-20 bg-gradient-to-br from-teal-500/30 to-cyan-500/30 rounded-2xl flex items-center justify-center text-2xl sm:text-4xl border border-teal-500/40"
                       whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                       transition={{ duration: 0.5 }}
                     >
@@ -467,7 +467,7 @@ const Home = () => {
 
         {/* ── TrueFocus Section ── */}
         <motion.div
-          className="w-11/12 sm:w-4/5 md:w-3/5 flex flex-col gap-1 justify-center items-center mx-auto pb-12 sm:pb-16"
+          className="mx-auto w-11/12 sm:w-4/5 md:w-3/5 flex flex-col gap-1 justify-center items-center mx-auto pb-12 sm:pb-16"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
